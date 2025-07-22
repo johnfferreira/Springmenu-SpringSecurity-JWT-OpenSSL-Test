@@ -57,6 +57,7 @@ Conta com autenticação via JWT, comunicação segura com OpenSSL, e uma arquit
 > propertie
 >
 > jwt.public.key=classpath:public.key
+>
 > jwt.private.key=classpath:private.key
 
 ---
