@@ -1,0 +1,16 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-dev
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    expose:
+      - "3306"
+    environment:
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=123
+      - MYSQL_DATABASE=menudb
+      - MYSQL_ROOT_PASSWORD=123
+    volumes:
+      - ./mysql-data:/var/lib/mysql
