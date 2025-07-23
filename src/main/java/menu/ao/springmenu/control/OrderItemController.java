@@ -4,6 +4,7 @@ import menu.ao.springmenu.entity.Order;
 import menu.ao.springmenu.entity.OrderItem;
 import menu.ao.springmenu.service.OrderItemService;
 import menu.ao.springmenu.service.OrderService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
@@ -27,9 +28,9 @@ public class OrderItemController {
     }
 
     @GetMapping
-    public ResponseEntity<List<OrderItem>> listAllOrderItem(JwtAuthenticationToken auth) {
+    public ResponseEntity<List<OrderItem>> listAllOrderItem(JwtAuthenticationToken auth, Pageable pageable) {
         var acess = UUID.fromString(auth.getName());
-        var orderItem = this.orderItemService.getAllOrderItem(acess);
+        var orderItem = this.orderItemService.getAllOrderItemPage(acess, pageable);
 
         return ResponseEntity.ok(orderItem);
     }

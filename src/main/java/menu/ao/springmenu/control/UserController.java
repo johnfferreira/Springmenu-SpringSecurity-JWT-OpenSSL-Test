@@ -2,12 +2,14 @@ package menu.ao.springmenu.control;
 
 import jakarta.validation.Valid;
 import menu.ao.springmenu.dto.CreateUserDto;
-import menu.ao.springmenu.entity.Role;
 import menu.ao.springmenu.entity.User;
+import menu.ao.springmenu.repository.UserRepository;
 import menu.ao.springmenu.service.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,8 +36,8 @@ public class UserController {
 
     @GetMapping
     // @PreAuthorize("hasAuthority('SCOPE_admin')")
-    public ResponseEntity<List<User>> listAllUser() {
-        var users = this.userService.getAllUsers();
+    public ResponseEntity<List<User>> listAllUser(Pageable pageable) {
+        var users = this.userService.getAllUsersPage(pageable).getContent();
 
         return ResponseEntity.ok(users);
     }

@@ -8,6 +8,8 @@ import menu.ao.springmenu.entity.Role;
 import menu.ao.springmenu.exception.NotFoundException;
 import menu.ao.springmenu.exception.PersistenceException;
 import menu.ao.springmenu.repository.OrderItemRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -68,6 +70,14 @@ public class OrderItemService {
         if (this.userService.isAdmin(acess))
             return this.orderItemRepository.findAll();
         return this.orderItemRepository.findAll().stream()
+                .filter(item -> item.getOrder().getUser().getId().equals(acess)).toList();
+    }
+
+    public List<OrderItem> getAllOrderItemPage(UUID acess, Pageable pageable) {
+
+        if (this.userService.isAdmin(acess))
+            return this.orderItemRepository.findAll(pageable).getContent();
+        return this.orderItemRepository.findAll(pageable).getContent().stream()
                 .filter(item -> item.getOrder().getUser().getId().equals(acess)).toList();
     }
 

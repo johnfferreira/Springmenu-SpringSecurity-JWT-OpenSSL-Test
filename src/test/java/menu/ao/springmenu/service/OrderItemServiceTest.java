@@ -12,6 +12,10 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.*;
 
@@ -158,6 +162,67 @@ class OrderItemServiceTest {
 
             assertEquals(2, result.size());
             verify(orderItemRepository).findAll();
+            verify(userService).isAdmin(adminAccess);
+        }
+    }
+
+    @Nested
+    class getAllOrderItemPage{
+        @Test
+        @DisplayName("Get all order items - Regular user")
+        void getAllOrderItemsPageRegularUser() {
+
+            UUID userAccess = UUID.randomUUID();
+            UUID otherUserAccess = UUID.randomUUID();
+
+            OrderItem userItem = new OrderItem();
+            Order userOrder = new Order();
+            User user =  new User();
+            user.setId(userAccess);
+            userOrder.setUser(user);
+            userItem.setOrder(userOrder);
+
+            OrderItem otherItem = new OrderItem();
+            Order otherOrder = new Order();
+            User otherUser =  new User();
+            otherUser.setId(otherUserAccess);
+            otherOrder.setUser(otherUser);
+            otherItem.setOrder(otherOrder);
+
+            Pageable pageable = PageRequest.of(0, 2);
+            List<OrderItem> allItems = List.of(userItem, otherItem);
+            Page<OrderItem> orderItemPage = new PageImpl<>(allItems, pageable, allItems.size());
+
+            when(userService.isAdmin(userAccess)).thenReturn(false);
+            when(orderItemRepository.findAll(pageable)).thenReturn(orderItemPage);
+
+            List<OrderItem> result = orderItemService.getAllOrderItemPage(userAccess,pageable);
+
+            assertEquals(1, result.size());
+            assertTrue(result.contains(userItem));
+            verify(orderItemRepository).findAll(pageable);
+            verify(userService).isAdmin(userAccess);
+        }
+
+        @Test
+        @DisplayName("Get all order items - Admin user")
+        void getAllOrderItemsPageAdmin() {
+
+            UUID adminAccess = UUID.randomUUID();
+            Pageable pageable = PageRequest.of(0, 2);
+            List<OrderItem> allItems = List.of(
+                    new OrderItem(),
+                    new OrderItem()
+            );
+            Page<OrderItem> orderItemPage = new PageImpl<>(allItems, pageable, allItems.size());
+
+            when(userService.isAdmin(adminAccess)).thenReturn(true);
+            when(orderItemRepository.findAll(pageable)).thenReturn(orderItemPage);
+
+            List<OrderItem> result = orderItemService.getAllOrderItemPage(adminAccess, pageable);
+
+            assertEquals(2, result.size());
+            verify(orderItemRepository).findAll(pageable);
             verify(userService).isAdmin(adminAccess);
         }
     }

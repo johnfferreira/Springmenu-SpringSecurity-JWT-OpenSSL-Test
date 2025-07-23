@@ -5,6 +5,7 @@ import menu.ao.springmenu.dto.CreateDishDto;
 import menu.ao.springmenu.entity.Category;
 import menu.ao.springmenu.entity.Dish;
 import menu.ao.springmenu.entity.Role;
+import menu.ao.springmenu.entity.User;
 import menu.ao.springmenu.exception.NotFoundException;
 import menu.ao.springmenu.repository.CategoryRepository;
 import menu.ao.springmenu.repository.DishRepository;
@@ -17,6 +18,10 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -158,5 +163,29 @@ class DishServiceTest {
         }
     }
 
+    @Nested
+    class getAllDishPage {
+        @Test
+        void getAllDishsPageWithSucess() {
+
+            Dish expected = new Dish();
+            expected.setId(1L);
+            expected.setName("cat1");
+            expected.setDescription("Description");
+            expected.setImageUrl("imageurl");
+            expected.setCreatedAt(LocalDateTime.now());
+            Pageable pageable = PageRequest.of(0, 2);
+            List<Dish> dishList = List.of(expected);
+            Page<Dish> dishPage = new PageImpl<>(dishList, pageable, dishList.size());
+
+            doReturn(dishPage).
+                    when(dishRepository).
+                    findAll(pageable);
+
+            var output = dishService.getAllDishPage(pageable);
+            assertNotNull(output);
+            assertEquals(1, output.size());
+        }
+    }
 
 }

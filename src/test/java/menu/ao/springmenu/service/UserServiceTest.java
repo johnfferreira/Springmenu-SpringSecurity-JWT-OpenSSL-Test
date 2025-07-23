@@ -16,6 +16,10 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
@@ -151,6 +155,31 @@ class UserServiceTest {
             var output = userService.getAllUsers();
             assertNotNull(output);
             assertEquals(1, output.size());
+        }
+
+        @Test
+        void getAlluserPageWithSucess(){
+            var basicRole = new Role();
+            basicRole.setName(Role.values.BASIC.name());
+
+            User expectedUser = new User();
+            expectedUser.setId(UUID.randomUUID());
+            expectedUser.setName("john");
+            expectedUser.setUserName("john@mail.com");
+            expectedUser.setPassword("encodedPassword");
+            expectedUser.setRole(Set.of(basicRole));
+
+            Pageable pageable = PageRequest.of(0, 2);
+            List<User> userList = List.of(expectedUser);
+            Page<User> userPage = new PageImpl<>(userList, pageable, userList.size());
+            doReturn(userPage).
+                    when(userRepository).
+                    findAll(pageable);
+
+            Page output =  userService.getAllUsersPage(pageable);
+            assertNotNull(output);
+            assertEquals(1, output.getContent().size());
+            assertEquals(expectedUser, output.getContent().get(0));
         }
     }
 

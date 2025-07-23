@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import menu.ao.springmenu.dto.CreateDishDto;
 import menu.ao.springmenu.entity.Dish;
 import menu.ao.springmenu.service.DishService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -40,8 +41,8 @@ public class DishController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Dish>> listAllDish() {
-        var dish = this.dishService.getAllDish();
+    public ResponseEntity<List<Dish>> listAllDish(Pageable pageable) {
+        var dish = this.dishService.getAllDishPage(pageable);
 
         return ResponseEntity.ok(dish);
     }

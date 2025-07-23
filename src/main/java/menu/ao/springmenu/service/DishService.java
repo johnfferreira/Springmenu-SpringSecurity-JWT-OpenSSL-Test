@@ -6,6 +6,7 @@ import menu.ao.springmenu.exception.NotFoundException;
 import menu.ao.springmenu.exception.PersistenceException;
 import menu.ao.springmenu.repository.DishRepository;
 import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -66,6 +67,11 @@ public class DishService {
 
     public List<Dish> getAllDish() {
         return this.dishRepository.findAll();
+    }
+
+    public List<Dish> getAllDishPage(Pageable pageable) {
+
+        return this.dishRepository.findAll(pageable).getContent();
     }
 
     public Dish updateDish(Long id, CreateDishDto updateDish) {
