@@ -61,7 +61,11 @@ Conta com autenticação via JWT, comunicação segura com OpenSSL, e uma arquit
 > jwt.private.key=classpath:private.key
 
 ---
-
+## 3. Executar os testes(JUnit & Mockito)
+### windows:
+- ./mvnw.cmd test -Dtest='!SpringmenuApplicationTests'
+### Linux/Mac:
+- ./mvnw test -Dtest='!SpringmenuApplicationTests'
 ## 🐳 Iniciando o Mysql com Docker Compose
 ### 1.Precisa ter o Docker instalado na sua maquina
 ### 2. Navegue na pasta Docker(na raiz do projecto) e execute
